@@ -14,7 +14,128 @@
 
 
 
+matrix_t matrix_init(int row_num, int col_num)
+{
+    double** matrix = (double**) malloc(row_num*sizeof(double*));
+    for (int ii = 0; ii < row_num; ii++)
+    {
+        matrix[ii] = (double*) malloc(col_num*sizeof(double));
+        
+        //init all element to zero
+        //C would not do for you
+        for (int jj = 0; jj < col_num; jj++)
+        {
+            matrix[ii][jj] = 0.0;
+        }
+        
+    }
+    return matrix;
+}
 
+bool matrix_gauss(matrix_t M, int row_num, int col_num)
+{
+    for (int diag = 0; diag < row_num; diag++)
+    {
+        /* for each row = variable = diagonal element */
+        double pivot = M[diag][diag];
+        if (pivot == 0) {
+            //printf("Gauss: Singular Matrix!\n");
+            //return false;
+            continue;
+        }
+        
+        /* from diagonal to right, divide out by the pivot diagonal element */
+        for (int col = diag; col < col_num; col++)
+        {
+            M[diag][col] /= pivot;
+        }
+        
+        /* for all other rows subtract scalled diag row, zeroing pivot column */
+        for(int row = 0; row < row_num; row++)
+        {
+            if (row != diag)
+            {
+                /* scale all elements of diag row by value which will zero diag element of this row,
+                 and subtract from this row */
+                double pivot2 = M[row][diag];
+                for (int col = diag; col < col_num; col++)
+                {
+                    M[row][col] -= M[diag][col]*pivot2;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+
+matrix_t matrix_transpose(matrix_t m, int row_num, int col_num)
+{
+    double ** m2 =  matrix_init(col_num, row_num);
+    
+    for (int ii = 0; ii< row_num; ii++)
+    {
+        for (int jj = 0; jj < col_num; jj++)
+        {
+            m2[jj][ii] = m[ii][jj];
+        }
+    }
+    return m2;
+}
+
+
+
+void matrix_print(matrix_t M, int row_num, int col_num)
+{
+    for (int ii = 0; ii < row_num; ii++) {
+        printf("|");
+        for (int jj = 0; jj <col_num; jj++)
+        {
+            printf("%.2e ",M[ii][jj]);
+        }
+        printf("|\n");
+    }
+}
+
+
+void matrix_free(matrix_t M, int row_num)
+{
+    for(int ii = 0; ii < row_num; ii++)
+    {
+        free(M[ii]);
+    }
+    
+    free(M);
+}
+
+void matrix_testing()
+{
+    int row_num = 3;
+    int col_num = 4;
+    
+    double ** m1 = matrix_init(row_num, col_num);
+    
+    for (int ii = 0; ii < row_num; ii++)
+    {
+        for (int jj = 0; jj< col_num; jj++)
+        {
+            m1[ii][jj] = (ii+1) * (jj+1) * (rand()%50);
+        }
+    }
+    
+    printf("init matrix\n");
+    matrix_print(m1, row_num, col_num);
+    
+    
+    printf("its transpose\n");
+    double ** m2 = matrix_transpose(m1, row_num, col_num);
+    matrix_print(m2, col_num, row_num);
+    
+    matrix_gauss(m1, row_num, col_num);
+    
+    printf("after gauss elimination\n");
+    matrix_print(m1, row_num, col_num);
+}
 
 Component::Component()
 {

@@ -1,5 +1,5 @@
 /**
- * @file Digital.cpp
+ * @file main.cpp
  *
  * @brief a example use HJYDigital
  *

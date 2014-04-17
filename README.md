@@ -10,4 +10,4 @@ HJYSimulation contains three simulation engines:
 
 
 
-These projects are for learning purpose.
+They are only for the learning purpose.

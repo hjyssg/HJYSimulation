@@ -1,7 +1,7 @@
 HJYPhysics
 ==========
 
-##a simple C++ OOP 3D physics engine
+##a simple C++ 3D point-mass physics engine
 
 
 This engine is for simple scientific simulation. It only consists one header file and one source file. So it is very  easy to import and use in your project.  
@@ -15,9 +15,7 @@ If your compiler supports OpenMp, please enable it. This engine supports openMp 
 
 * **Vertex**:  It represents a mathematical point in the 3D space. It has x, y, z coordinates and related methods: add,substract, dot-product, cross-product and etc. It is used to represent position, velocity and acceleration bt the following classes.
 *  **PointMass**: the most basic component in Newton Physics. It has position, velocity, acceleration, mass. Point mass does not have volume or radius. It is a point with mass. 
-* **RigidSphere**: subclassing from PointMass. Different than PointMass, It has radius and can collide with other rigidSphere.
 * **SpringBond**: The representation of a spring connecting two point mass objects and follows the Hooke's Law. 
-*  **Molecule**: A simplified representation of molecule. It used “Pointmass” and “springbond” to represent atom and interatomic bonds. 
 *  **TheWorldTimer**: A small timer used by “theWorld” to track the time.
 *  **TheWorld**: The representation of Newton physics world. Point mass and other objects will be added to it and interact each the time steps. By specifying flags, it can integrate by using different integration methods and enable/disable different force computation. Please don't turn on all force computaion flag. Only keep on nessary flags, otherwise the computaion will be slow.
 
@@ -44,8 +42,6 @@ To set up on windows machine,First, download and install the 32-bit Python-3.2.2
 For more detial, you can also refer to this [page](http://kona.ee.pitt.edu/1180wiki/doku.php?id=how_to_mix_c_and_python). 
 
 
-####unit test
-In the "unittest" folder, I wrote the a simple unit test for "Vertex" and "Pointmass". If I have more time, I will cover more in my unit test.
 
 ####screenshots
 ![screenshot1](./screenshot/Bouncing_ball_SS.png?raw=true) 
