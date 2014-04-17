@@ -1,0 +1,57 @@
+##############################
+#   
+#    by Junyang Huang
+#    Created on March 4, 2014 
+#
+#############################################################################################
+#   
+# a text file to represent a digital circuit
+# specify component:  NOT, AND, OR
+# <instance type number> <instance id>  <output net number>  { <input net number>+ }   
+# for event E  <wire ID> <time> <value> 
+# e.g E 1 2 1.0 
+# 
+#  Note:
+#  		1. Component ID must be unique
+#		2. Wire ID must be unique
+#       3. NOT can only one input
+#       4. wire is implictly declared by event and compoent statement
+#       5. One wire connect two component, "sharing" will result unexpected result
+#        
+#
+#
+#############################################################################################
+
+#
+#  create based on test1.jpg
+#
+
+#declare components
+#two OR gates
+C  OR  1 5 {1 2}
+C  OR  2 6 {3 4}
+
+# one AND gate 
+C  AND  3 7 {5 6}
+
+# one NOT GATE
+C NOT  4  8 {7}
+
+
+
+# declare event 
+# init value
+E 1 1 1.0
+E 2 1 1.0
+E 3 1 0.0
+E 4 1 0.0
+
+#change input
+E 3 5 1.0
+E 4 5 1.0
+
+#change input all to zero
+# E 1 5 0.0
+# E 2 5 0.0
+# E 3 5 0.0
+# E 4 5 0.0

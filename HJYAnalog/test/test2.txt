@@ -1,0 +1,47 @@
+##############################
+#   
+#    by Junyang Huang
+#    Created on March 4, 2014 
+#
+#############################################################################################
+#   
+# a text file to represent a digital circuit
+# specify component:  NOT, AND, OR
+# <instance type number> <instance id>  <output net number>  { <input net number>+ }   
+# for event E  <wire ID> <time> <value> 
+# e.g E 1 2 1.0 
+# 
+#  Note:
+#  		1.component ID must be unique
+#		2. Wire ID must be unique
+#       3. NOT can only one input
+#        
+#
+#
+#############################################################################################
+
+#
+#  create one SR NOR latch
+#
+
+#declare components
+#two NOR gates
+C  NOR  1 3 {1, 4}
+C  NOR  2 4 {2, 3}
+
+
+
+# declare event 
+# init value
+E 1 1 0.0
+E 2 1 1.0
+
+
+#set
+E 1 5 1.0
+E 2 5 0.0
+
+#hold state
+E 1 10 0.0
+E 2 10 0.0
+
