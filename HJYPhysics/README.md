@@ -48,11 +48,11 @@ For more detial, you can also refer to this [page](http://kona.ee.pitt.edu/1180w
 In the "unittest" folder, I wrote the a simple unit test for "Vertex" and "Pointmass". If I have more time, I will cover more in my unit test.
 
 ####screenshots
-![screenshot1](https://github.com/hjyssg/HJYPhysics/blob/master/screenshot/Bouncing_ball_SS.png?raw=true) 
+![screenshot1](./screenshot/Bouncing_ball_SS.png?raw=true) 
 [bouncing ball](http://youtu.be/mDeFVCZtp5Y "bouncing ball")
-![screenshot1](https://github.com/hjyssg/HJYPhysics/blob/master/screenshot/Matrix_system_SS.png?raw=true)
+![screenshot1](./screenshot/Matrix_system_SS.png?raw=true)
 [spring and ball matrix](http://youtu.be/Qg-D4nlz-s8 "spring and ball matrix")
-![screenshot1](https://github.com/hjyssg/HJYPhysics/blob/master/screenshot/Solar_system_SS.png?raw=true)
+![screenshot1](./screenshot/Solar_system_SS.png?raw=true)
 [solar system](http://youtu.be/HIRNhrII4ho "solar system")
 
 
