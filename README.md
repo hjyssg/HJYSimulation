@@ -2,11 +2,11 @@ HJYSimulation
 ==========
 
 
-HJYSimulation contains three simulation engines:
+HJYSimulation contains three project:
 
 * HJYPhysics: a point-mass physics engine 
-* HJYAnalog: a analog circuit simulation api.
-* HJYDigital: a digital circuit simulation api
+* HJYAnalog: an analog circuit simulation engine.
+* HJYDigital: a digital circuit simulation engine.
 
 
 
