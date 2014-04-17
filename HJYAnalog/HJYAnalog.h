@@ -13,8 +13,11 @@
 #include <vector>
 
 #include <string>
+#include "Matrix.h"
 
 #include <stdlib.h>
+
+
 
 #pragma mark helper-functions and macro
 //print function
@@ -38,8 +41,8 @@
 #define A
 #define UH *1e-6
 
-
-#pragma mark C-matrix functions
+#include <stdlib.h>
+#include <stdbool.h>
 
 typedef double **  matrix_t;
 
@@ -62,6 +65,7 @@ void matrix_free(matrix_t M, int row_num);
 void matrix_testing();
 
 
+
 class Node;
 class Timer;
 
@@ -70,10 +74,7 @@ enum ComponentType{
     None,
     Voltage_Source,
     Current_Source,
-    Resistor,
-    Inductor,
-    Capacitor,
-    Diode,
+    Resistor
 };
 
 enum TerminalType {
@@ -218,68 +219,6 @@ public:
     std::string toString();
 };
 
-///inductor
-class inductor:public Component
-{
-public:
-  
-    
-public:
-    inductor();
-    
-    ///construct with the inductance that will not change during the simulation
-    inductor(double const_inductance);
-
-    ComponentType get_type();
-    
-    double get_conductance(double time_step);
-
-    ///to string method
-    std::string toString();
-};
-
-///capacitor
-class capacitor:public Component
-{
-public:
-    
-
-    
-public:
-    capacitor();
-    
-    ///construct with the inductance that will not change during the simulation
-    capacitor(double const_capacitance);
-    
-    ComponentType get_type();
-
-    double get_conductance(double time_step);
-    
-    ///to string method
-    std::string toString();
-};
-
-
-///diode
-class diode:public Component
-{
-public:
-    double thermal_voltage;
-    double saturation_current;
-   
-public:
-    diode(double thermal_voltage_p, double saturation_current_p);
-    
-    ///calculate current according to nonlinear diode equation
-    double get_current();
-    
-    double get_conductance(double time_step);
-    
-    ComponentType get_type();
-    
-    ///to string method
-    std::string toString();
-};
 
 
 
@@ -356,16 +295,7 @@ public:
     ///only independent current source
     std::vector<current_source *> current_sources;
     
-    ///for internal algorithm used
-    std::vector<capacitor *> capacitors;
-    
-    ///for internal algorithm used
-    std::vector<inductor *> inductors;
-    
-    ///for internal algorithm used
-    std::vector<diode *> diodes;
-    
-    
+
     
 private:
      ///for internal algorithm used

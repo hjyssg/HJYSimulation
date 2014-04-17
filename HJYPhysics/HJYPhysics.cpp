@@ -345,10 +345,6 @@ Vertex  Vertex::get_copy()
 }
 
 
-ShapeType PointMass::get_shape()
-{
-	return none;
-}
 
 std::string Vertex::toString()
 {
@@ -480,18 +476,6 @@ std::string PointMass::toString()
 	return temp;
 }
 
-//use point mass parent constructor
-RigidSphere::RigidSphere():PointMass()
-{
-	this->radius = 0.0;
-}
-
-
-ShapeType RigidSphere::get_shape()
-{
-	return sphere;
-}
-
 SpringBond::SpringBond()
 {
 }
@@ -562,116 +546,6 @@ bool SpringBond::isEqual( SpringBond * other)
 }
 
 
-PowerSpringBond::PowerSpringBond(PointMass *pm1_p, PointMass *pm2_p, double original_length_p, double spring_constant_p,int power_p)
-{
-	this->pm1 = pm1_p;
-	this->pm2 = pm2_p;
-	this->original_length = original_length_p;
-	this->spring_constant = spring_constant_p;
-	this->power = power_p;
-}
-
-Vertex PowerSpringBond::get_force_on_pm1()
-{
-	//pm1 -> pm2
-	Vertex directionV = pm2->pos.sub(pm1->pos);
-	double distance = directionV.length();
-
-	//delta X
-	double difference = distance - this->original_length;
-	
-
-	//normaliza direction
-
-	directionV.normalize_self();
-
-	//F = K* delta X
-	long double temp = pow(difference, this->power);
-	long double scal = temp* spring_constant;
-	directionV.scale_self(scal, scal, scal);
-
-	//CLOG(difference<<" "<<this->power<<" "<<spring_constant);
-	//CLOG(temp<<" "<<scal<<directionV.toString());
-
-	return directionV;
-}
-
-
-//get potential energy of the spring
-double PowerSpringBond::get_potential_energy()
-{
-	double length = pm2->pos.distance_to_v(pm1->pos);
-	double difference = length - original_length;
-
-	double PE = 0.5*spring_constant* pow(difference, power)* pow(difference, power);
-	return PE;
-}
-
-Molecule::Molecule()
-{
-
-}
-
-void Molecule::add_atom(PointMass *atom)
-{
-	atoms.push_back(atom);
-}
-
-void Molecule::add_atom_bond(SpringBond * bond)
-{
-	atom_bonds.push_back(bond);
-}
-
-double  Molecule::get_mass()
-{
-	double mass = 0;
-	for (int ii = 0; ii < atoms.size(); ++ii)
-	{
-		PointMass *atm = atoms[ii];
-		mass  += atm->mass;
-	}
-	return mass;
-}
-
-Vertex Molecule::get_position()
-{
-	//http://hyperphysics.phy-astr.gsu.edu/hbase/cm.html
-	Vertex pos = Vertex();
-	for (int ii = 0; ii < atoms.size(); ++ii)
-	{
-		PointMass *atm = atoms[ii];
-		double tm = atm->mass;
-		Vertex * p = &atm->pos;
-		pos.transfer_self(p->x*tm,p->y*tm,p->z*tm);
-	}
-
-	pos.scale_self(1.0/this->get_mass());
-	return pos;
-}
-
-Vertex Molecule::get_acceleration()
-{
-	Vertex acl = Vertex();
-	for (int ii = 0; ii < atoms.size(); ++ii)
-	{
-		PointMass *atm = atoms[ii];
-		acl.add_self(atm->acl);
-	}
-
-	acl.scale_self(1.0/(double)atoms.size());
-	return acl;
-}
-
-void Molecule::apply_force_on_molecule(Vertex force)
-{
-	for (int ii = 0; ii < atoms.size(); ++ii)
-	{
-		PointMass *atm = atoms[ii];
-		force.scale_self(1/atm->mass);
-		atm->acl.add_self(force);
-	}
-}
-	
 
 TheWorld::TheWorld()
 {
@@ -680,8 +554,6 @@ TheWorld::TheWorld()
 	periodic_box_boundry_flag = false;
 	gravitation_flag = false;
 	electric_force_flag = false;
-	rigid_body_collision_flag = false;
-	lennard_jones_potential_flag = false;
 	x_negative_bnd = -1.7e+308; 
 	x_positive_bnd = 1.7e+308; 
 	y_negative_bnd = -1.7e+308; 
@@ -701,22 +573,6 @@ void TheWorld::add_spring_bond(SpringBond *spring_bond)
 	spring_bond_arr.push_back(spring_bond);
 }
 
-void TheWorld::add_molecule(Molecule * molecule)
-{
-	for (int ii = 0; ii < molecule->atoms.size(); ++ii)
-	{
-		PointMass *pm = molecule->atoms[ii];
-		this->add_point_mass(pm);
-	}
-
-	for (int ii = 0; ii < molecule->atom_bonds.size(); ++ii)
-	{
-		SpringBond *bnd = molecule->atom_bonds[ii];
-		this->add_spring_bond(bnd);
-	}
-
-	molecule_arr.push_back(molecule);
-}
 
 
 
@@ -740,16 +596,7 @@ void TheWorld::set_gravitation_flag(bool on)
 {
 	this->gravitation_flag = on;
 }
-void TheWorld::set_rigid_body_collision_flag(bool on)
-{
-	this->rigid_body_collision_flag = on;
-}
 
-
-void TheWorld::set_lennard_jones_potential_flag(bool on)
-{
-	this->lennard_jones_potential_flag = on;
-}
 
 void TheWorld::set_periodic_box_boundry_flag(bool on)
 {
@@ -849,52 +696,6 @@ void TheWorld::apply_electric_among_objects()
 	}
 }
 
-void TheWorld::apply_lennard_jones_potential()
-{
-	#pragma omp parallel for num_threads(4)
-	for(int ii = 0; ii < molecule_arr.size();ii++)
-	{
-		Molecule *m1 = molecule_arr[ii];
-		Vertex pos1 = m1->get_position();
-
-		for(int jj = 0; jj < molecule_arr.size();jj++)
-		{
-			if (ii==jj){continue;}
-
-			Molecule *m2 = molecule_arr[jj];
-			Vertex pos2 = m2->get_position();
-
-			Vertex force_by_pm2 = pos1.sub(pos2);
-			double distance = force_by_pm2.length();
-
-			//from http://www.numfys.net/examples/ex1_1_lennardjones.pdf
-			const double epsilon  = 0.32e-9;
-			const double sigma = 1.08e-21;
-			
-
-			//refer to http://www2.physics.umd.edu/~alaporta/Lennard-Jones.html
-			
-
-			//12σ12/r13 
-			double temp1 = 12*(pow(sigma,12)/pow(distance,13));
-
-			//6σ6/r7	
-			double temp2 = 6*(pow(sigma,6)/pow(distance,7));
-			//R(r) = 4ε [12σ12/r13 - 6σ6/r7]
-			double R =4* epsilon * (temp1 - temp2); 
-
-
-			R *=10; //manual adjusting
-
-
-
-			force_by_pm2.scale_self(R);
-
-			m1->apply_force_on_molecule(force_by_pm2);
-
-		}
-	}
-}
 
 void TheWorld::apply_spring_force()
 {
@@ -949,10 +750,7 @@ void TheWorld::apply_force()
 		apply_electric_among_objects();
 	}
 
-	if (lennard_jones_potential_flag)
-	{
-		apply_lennard_jones_potential();
-	}
+
 
 	apply_spring_force();
 }
@@ -1033,79 +831,12 @@ void TheWorld::update_state_by_rectangular(double time_step)
 	}
 }
 
-void TheWorld::update_state_by_simposon_rule(double time_step)
-{
-	//CLOG("HAVE NOT SUPPORT SIMPSON INTEGRATION YET!!");
-	//refer to http://en.wikipedia.org/wiki/Simpson's_rule
-	// = (b-a)/6[f(a)+4f((a+b)/2)+f(b)]
-
-	apply_force();
-
-	double one_sixth_dt = time_step/6.0;
-
-	#pragma omp parallel for num_threads(4)
-	for(int ii = 0; ii < point_mass_arr.size();ii++)
-	{
-		PointMass *pm  = point_mass_arr.at(ii);
-		Vertex old_acl = pm->acl;
-		Vertex old_spd = pm->spd;
-
-		//calculate new speed
-		//f(a)+f(b)
-		Vertex spd_integral = pm_acl_one_time_step_ago[ii]->transfer(old_acl.x,
-																	 old_acl.y,
-																	 old_acl.z);
-		//+4f((a+b)/2)
-		spd_integral.transfer_self(pm_acl_half_time_step_ago[ii]->x*4,
-								   pm_acl_half_time_step_ago[ii]->y*4,
-								   pm_acl_half_time_step_ago[ii]->z*4);
-		//*(b-a)/6
-		spd_integral.scale_self(one_sixth_dt,one_sixth_dt,one_sixth_dt);
-
-		//calculate new position
-		//f(a)+f(b)
-		Vertex pos_integral = pm_spd_one_time_step_ago[ii]->transfer(spd_integral.x,
-																	 spd_integral.y,
-																	 spd_integral.z);
-		//+4f((a+b)/2)
-		pos_integral.transfer_self(pm_spd_half_time_step_ago[ii]->x*4,
-								   pm_spd_half_time_step_ago[ii]->y*4,
-								   pm_spd_half_time_step_ago[ii]->z*4);
-		//*(b-a)/6
-		pos_integral.scale_self(one_sixth_dt,one_sixth_dt,one_sixth_dt);
-
-		//save the old speed and old acl for next time using
-		pm_spd_one_time_step_ago[ii] = pm_spd_half_time_step_ago[ii];
-		pm_acl_one_time_step_ago[ii] = pm_acl_half_time_step_ago[ii];
-		pm_spd_half_time_step_ago[ii] = &old_spd;
-		pm_acl_half_time_step_ago[ii] = &old_acl;
-
-		pm->spd.add_self(spd_integral);
-		pm->pos.add_self(pos_integral);
-	}
-}
 
 
-void TheWorld::init()
-{
+void TheWorld::init(){
+
 	this->apply_force();
 
-	if (intergration_type == simpsons_rule_integration)
-	{	
-		//init fot later simplson update_state calculation
-		for (int ii = 0; ii < point_mass_arr.size(); ++ii)
-		{
-			PointMass *pm = point_mass_arr[ii];
-			pm_spd_one_time_step_ago.push_back(&pm->spd);
-			pm_spd_half_time_step_ago.push_back(&pm->spd);
-
-			pm_acl_one_time_step_ago.push_back(&pm->acl);
-			pm_acl_half_time_step_ago.push_back(&pm->acl);
-
-			//CLOG(pm_spd_one_time_step_ago[ii]->toString()<<" "<<pm_spd_half_time_step_ago[ii]->toString());
-			//CLOG(pm_acl_one_time_step_ago[ii]->toString()<<" "<<pm_acl_half_time_step_ago[ii]->toString());
-		}
-	}
 }
 
 //assert at least two point mass
@@ -1118,9 +849,6 @@ void TheWorld::update_state(double time_step)
 	}else if (intergration_type == velocity_Verlet_integration)
 	{
 		update_state_by_velocity_Verlet_integration(time_step);
-	}else if (intergration_type ==  simpsons_rule_integration)
-	{
-		update_state_by_simposon_rule(time_step);
 	}
 	else
 	{
@@ -1177,36 +905,7 @@ void TheWorld::update_state(double time_step)
 }
 
 
-void TheWorld::apply_collision_effect()
-{
-	for(int ii = 0; ii < point_mass_arr.size()-1;ii++)
-	{
-		PointMass *pm  = point_mass_arr.at(ii);
-		ShapeType s1 = pm->get_shape();
-		if (s1==none){continue;}
 
-		for(int jj = ii+1; jj < point_mass_arr.size();jj++)
-		{
-			PointMass *pm_2  = point_mass_arr.at(jj);
-			ShapeType s2 = pm_2->get_shape();
-			if (s2==none){continue;}
-
-			Vertex tempV = pm->pos.sub(pm_2->pos);
-			double distanceSquare = tempV.length_square();
-			double distance = sqrt(distanceSquare);
-			if (s1==sphere&&s2==sphere)
-			{
-				RigidSphere * ball1 = (RigidSphere *)pm;
-				RigidSphere * ball2 = (RigidSphere *)pm_2;
-
-				if (distance < (ball1->radius+ball2->radius))
-				{
-					//wrong
-				}
-			}
-		}
-	}
-}
 
 std::string TheWorld::toString()
 {

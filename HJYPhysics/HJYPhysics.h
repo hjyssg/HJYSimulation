@@ -30,7 +30,7 @@
 #include <stdlib.h>
 
 
-//syntax conday for unit
+//syntax candy for unit
 #define M
 #define MM *1e-3
 #define NM *1e-9
@@ -58,62 +58,8 @@ const int SECONDS_OF_YEAR = 365*SECONDS_OF_DAY;
 #define DEG_TO_RAD(a)  a/180*3.14159265359
 #define RAD_TO_DEG(a)  a/3.14159265359*180
 
-//solar system constants from http://nssdc.gsfc.nasa.gov/planetary/factsheet/
-#define SUN_MASS 1.99e+30 //kg
-#define SUN_DIAMETER 1391e+6 //m
-
-#define MERCURY_MASS  0.33e24
-#define MERCURY_DIAMETER 4897e3
-#define MERCURY_ORBITAL_VELOCITY 47900  
-#define MERCURY_DISTANCE_FROM_SUN 57.9e9
-
-#define VENUS_MASS 4.87e24
-#define VENUS_DIAMETER 12104e3
-#define VENUS_ORBITAL_VELOCITY 35000
-#define VENUS_DISTANCE_FROM_SUN 108.2e9
-
-#define EARTH_MASS 5.972e+24 //kg
-#define EARTH_DIAMETER  12756e3 //m
-#define EARTH_ORBITAL_VELOCITY 29800 // m/s
-#define EARTH_DISTANCE_FROM_SUN 149.6e9 // m
-
-#define MARS_MASS 0.642e24
-#define MARS_DIAMETER 6792e3
-#define MARS_ORBITAL_VELOCITY 24100
-#define MARS_DISTANCE_FROM_SUN 227.9e9
-
-#define JUPITER_MASS 1898e24
-#define JUPITER_DIAMETER 142984e3
-#define JUPITER_ORBITAL_VELOCITY 13100
-#define JUPITER_DISTANCE_FROM_SUN 778.6e9
-
-#define SATURN_MASS 568e24
-#define SATURN_DIAMETER 120536e3
-#define SATURN_ORBITAL_VELOCITY 9700
-#define SATURN_DISTANCE_FROM_SUN 1433.5e9
-
-#define URANUS_MASS 86.8e24
-#define URANUS_DIAMETER 51118e3
-#define URANUS_ORBITAL_VELOCITY 6800
-#define URANUS_DISTANCE_FROM_SUN 2872.5e9
-
-#define NEPTUNE_MASS 102e24
-#define NEPTUNE_DIAMETER 49528e3
-#define NEPTUNE_ORBITAL_VELOCITY 5400
-#define NEPTUNE_DISTANCE_FROM_SUN 4495.1e9
 
 
-const double HYDROGEN_ATOM_MASS = 1.674e-27 KG;
-const double HYDROGEN_ATOM_RADIUS = 0.0528 NM;
-const double HYDROGEN_ATOM_CHARGE = 1.6e-19 C;
-
-
-const double OXYGEN_ATOM_MASS = 2.657e-26 KG;
-const double OXYGEN_ATOM_RADIUS = 0.074 NM;
-const double OXYGEN_ATOM_CHARGE = -3.2e-19 C;
-
-const double WATER_MOLECULE_RADUIS = 0.4 NM;
-const double WATER_MOLECULE_ATOMS_ANGLE = DEG_TO_RAD(104.5);
 
 #pragma mark helper-functions and macro
 //print function
@@ -148,14 +94,6 @@ spd: speed
 #pragma mark the engine
 
 
-/*
-   supported rigid shapes 
-*/
-enum ShapeType
-{
-	none = 0, 
-	sphere = 1
-};
 
 
 /*
@@ -301,33 +239,13 @@ public:
 	//but this one use velocity_Verlet_integration
 	void update_state_by_velocity_Verlet_integration(double time_step, Vertex old_acl);
 
-	//get shape type, will return none
-	virtual ShapeType get_shape();
 
 	//to string method
 	std::string toString();
 };
 
 
-/*
-	a physics presentation of rigid sphere
-	it has radius to specify its dimension
-	also, it can collide with other rigidBody
-*/
-class RigidSphere: public PointMass
-{
-public:
-	//the radius of the rigid sphere, in metter
-	double radius; 
 
-public:
-	//constructor
-	RigidSphere();
-
-	//get shapre, will return sphere
-	ShapeType get_shape();
-
-};
 
 /*
 a spring connect two point mass objects
@@ -369,42 +287,6 @@ public:
 };
 
 
-class PowerSpringBond: public SpringBond
-{
-public:
-	//shoud not be even int
-	int power;
-
-public:
-
-	//constructor
-	PowerSpringBond(PointMass *pm1_p, PointMass *pm2_p, double original_length_p, double spring_constant_p,int power_p);
-
-	Vertex get_force_on_pm1();
-	
-
-	//get potential energy of the spring
-	double get_potential_energy();
-};
-
-/*
-   a very simplied representation of molecule
-*/
-class Molecule
-{
-public:
-	std::vector<PointMass *> atoms;
-	std::vector<SpringBond *> atom_bonds;
-	
-public:
-	Molecule();
-	void add_atom(PointMass *atom);
-	void add_atom_bond(SpringBond *bond);
-	double get_mass();
-	Vertex get_position();
-	Vertex get_acceleration();
-	void apply_force_on_molecule(Vertex force);
-};
 
 /*
 a timer class used by "theWorld" class to keep track of time
@@ -441,7 +323,6 @@ enum IntergrationTypes
 {
 	simple_euler_intergration = 1, //also called "Rectangular Rule"
 	velocity_Verlet_integration = 2, //Also called symplectic Euler, Leap-Frog
-	simpsons_rule_integration = 3, //must keep use the same time step
 };
 
 
@@ -454,8 +335,6 @@ class TheWorld
 public:
 	//a list containing point mass or rigid ball inside theWorld
 	std::vector<PointMass *> point_mass_arr;
-
-	std::vector<Molecule * > molecule_arr;
 
 	//a list containing springBond inside theWorld
 	std::vector<SpringBond *> spring_bond_arr;
@@ -472,17 +351,11 @@ public:
 	//on turn, object will affect each other by electriccharge
 	bool electric_force_flag;
 
-	//defualt is false
-	//on turn, rigid body can collide each other
-	bool rigid_body_collision_flag;
-
 	//default is {0, 0, 0}
 	//e.g the global acceleration of earth is {0,-9.8,0}
 	Vertex global_acceleration;
 
 
-	//flag to enable/disable lennard jones potential
-	bool lennard_jones_potential_flag;
 
 	//a flag to enable/disable periodic box boundry
 	//used to contrain objects in a box boundry
@@ -497,13 +370,6 @@ public:
 	//different integrations have different performance cost, accuracy and stability
 	IntergrationTypes intergration_type;
 
-private:
-	//array to hold previous calculation result
-	//used by Simpson's rule
-	std::vector<Vertex *> pm_spd_one_time_step_ago;
-	std::vector<Vertex *> pm_acl_one_time_step_ago;
-	std::vector<Vertex *> pm_spd_half_time_step_ago;
-	std::vector<Vertex *> pm_acl_half_time_step_ago;
 
 public:
 	//constructor
@@ -517,16 +383,12 @@ public:
 	//turn on or off gravitation calculation when "update_state(double time_step)"
 	void set_gravitation_flag(bool on);
 
-	//turn on or off collision calculation when "update_state(double time_step)"	
-	void set_rigid_body_collision_flag(bool on);
 
-	//turn on or off the lennard_jones_potential calculation   when "update_state(double time_step)"	
-	void set_lennard_jones_potential_flag(bool on);
 
 	//turn on or off the electric_force calculation   when "update_state(double time_step)"	
 	void set_electric_force_flag(bool on);
 
-	//turn on or off the periodic_box_boundry calculation   when "update_state(double time_step)"	
+	//turn on or off the periodic_box_boundry calculation   when "update_state(double time_step)
 	void set_periodic_box_boundry_flag(bool on);
 
 	//set the boundry of x, y, z
@@ -547,9 +409,6 @@ public:
 	//unexception will happen if call this after "update_state(double time_step)"
 	void add_point_mass(PointMass * pm);
 
-	//add a list of pointmasses to the "point_mass_arr"
-	//the difference of is that point mass inside a molecule will not have lennard_jones_potential each other
-	void add_molecule(Molecule * molecule);
 
 	//add spring bond
 	//the two pms connected by sprintBond should be already added by "add_point_mass(PointMass * pm)"
@@ -586,23 +445,16 @@ private:
 	//update state by using rectangular method
 	void update_state_by_rectangular(double time_step);
 
-	//update state by using simposon rule
-	void update_state_by_simposon_rule(double time_step);
-
 	//spring spring force on objects
 	void apply_spring_force();
 
 	//calculate gravitation and apply their acceleration
 	void apply_gravitation_among_objects();
 
-	//apply lennard_jones_potential
-	void apply_lennard_jones_potential();
 
 	//apply elertric force among object
 	void apply_electric_among_objects();
 
-	//apply collision detecting
-	void apply_collision_effect(); 
 
 	//apply all force method above according to the flags and setting
 	//s.t change objects' acceleration
