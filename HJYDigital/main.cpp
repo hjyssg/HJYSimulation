@@ -28,28 +28,14 @@
 
 #include "HJYDigital.h"
 
-
 using namespace std;
 using namespace boost;
 
 
 DigitalCircuit *circuit;
 
-bool PRINT_FLAG = true;     //a flag to disable/enable print
-
- /**
- * @brief 
- */
-void update_vpython()
-{
-	int tt = circuit->get_current_time();
-    
-    if(PRINT_FLAG)
-    {
-        printf("at time %i ns:\n", tt);
-        circuit->log_wire();
-    }
-}
+//a flag to disable/enable print
+bool PRINT_FLAG = true;     
 
 
 
@@ -85,16 +71,15 @@ void parse_module_string(string line)
 			}else if (iequals(temp, "NOR")){
 				m->functionType = NOR;
 			}
-            else if (iequals(temp, "NAND")){
+            		else if (iequals(temp, "NAND")){
 				m->functionType = NAND;
 			}
-            else{
+            		else{
 				CLOG("SUPPORTED COMPONENT: ["<<(token)<<"]"<<line);
 				return;
 			}	
 		}
-		else if (ii == 2) 
-		{
+		else if (ii == 2) {
 			//specify id
 			try{
 				m->id = lexical_cast<int>(token);
@@ -104,11 +89,9 @@ void parse_module_string(string line)
 				return;
 			}
 		}
-		else if (ii == 3)
-		{
+		else if (ii == 3){
 			//specify output
-			try
-			{
+			try{
 				int output_wire_id = lexical_cast<int>(token);
 				Wire * w = circuit->getWireWithID(output_wire_id);
 
@@ -119,20 +102,18 @@ void parse_module_string(string line)
 					circuit->wireList.push_back(w);
 				}
                 
-                //connect module and wire togher
-                w->driver = m;
+        			 //connect module and wire togher
+        			 w->driver = m;
 				m->output_wire = w;
 			}
-			catch(const bad_lexical_cast &)
-			{
+			catch(const bad_lexical_cast &){
 				CLOG("WRONG MODULE OUTPUT WIRE ID: ["<<(token)<<"]"<<line);
 				return;
 			}
 		}else 
 		{
 			//specify input
-			try
-			{
+			try{
 				int input_wire_id = lexical_cast<int>(token);
 				Wire * w = circuit->getWireWithID(input_wire_id);
 
@@ -143,12 +124,11 @@ void parse_module_string(string line)
 					circuit->wireList.push_back(w);
 				}
 
-                 //connect module and wire togher
-                w->receiver = m;
+                 		//connect module and wire togher
+        			 w->receiver = m;
 				m->input_wires.push_back(w);
 			}
-			catch(const bad_lexical_cast &)
-			{
+			catch(const bad_lexical_cast &){
 				CLOG("WRONG MODULE INPUT WIRE ID: ["<<(token)<<"]"<<line);
 				return;
 			}
@@ -315,23 +295,29 @@ int main(int argc, char** argv)
 	circuit = new DigitalCircuit();
 	init_circuit_with_file(std::string("test3.txt"));
 
-    set_delay(1);
+    	set_delay(1);
     
 	circuit->init();
 	circuit->log_event();
-    circuit->log_wire();
-    circuit->log_module();
+    	circuit->log_wire();
+    	circuit->log_module();
 	
-    printf("=========Begin The Simulation=========\n");
+    	printf("=========Begin The Simulation=========\n");
 	while (circuit->hasNextEvent())
 	{
-         update_vpython();
+      
+          int tt = circuit->get_current_time();
+    
+    	  if(PRINT_FLAG){
+        	printf("at time %i ns:\n", tt);
+		 circuit->log_wire();
+    	  }
 
-      circuit->jump_to_next_event();
+      		circuit->jump_to_next_event();
 	}
     
-    update_vpython();
-    circuit->log_event();
+        update_vpython();
+        circuit->log_event();
 	system("pause");
 	return 0;
 }
