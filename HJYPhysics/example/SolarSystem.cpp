@@ -26,9 +26,6 @@ char cmd[300];  //a resuable string for vpython
 using namespace std;
 
 
-
-
-
 TheWorld world;
 PointMass * sun;
 PointMass * mercury;
@@ -42,7 +39,6 @@ PointMass * neptune;
 PointMass * moon;
 
 vector<std::string> name_list;
-
 
 double total_kinetic_energy = 0;
 

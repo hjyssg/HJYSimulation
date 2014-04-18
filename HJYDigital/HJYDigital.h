@@ -1,7 +1,7 @@
 /**
 * @mainpage HJYDigital
 * A simple digital circuit simulation engine
-* @author Junyang Huang 黄竣杨
+* @author hjyssg
 **/
 
 
@@ -34,7 +34,6 @@
 *Remember to call srand() with a proper seed each time your program starts.
 */
 double fRand(double fMin, double fMax);
-
 
 
 class Module;
@@ -203,8 +202,6 @@ class DigitalCircuit
 {
 
 public:
-	
-	
     /**
      * @brief index points to the event in the eventList that is going to happen next
      */
@@ -280,9 +277,6 @@ public:
      @brief print all modules of modulelist for debugging
      */
     void log_module();
-
-    
-    
 };
 
 #endif	/* HJYDIGITAL_H */

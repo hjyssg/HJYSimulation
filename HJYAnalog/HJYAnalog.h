@@ -2,7 +2,7 @@
 /**
  * @mainpage HJYAnalog.h
  * A simple digital circuit simulation engine
- * @author Junyang Huang
+ * @author hjyssg
  **/
 
 
@@ -124,7 +124,6 @@ public:
     ///constructor
     Component();
     
-    
     ///get current
     virtual double get_current();
     
@@ -144,17 +143,14 @@ class voltage_source:public Component
     ///default is false
     bool use_voltage_function;
     
-    
 private:
     std::function<double(double)> voltage_function;
-    
     
 public:
     voltage_source();
     
     ///construct with the voltage that will not change during the simulation
     voltage_source(double const_voltage);
-    
     
     void set_voltage_function(std::function<double(double)> voltage_function_p);
     
@@ -177,23 +173,19 @@ public:
     bool use_current_function;
     
 private:
-         std::function<double(double)> current_function;
+    std::function<double(double)> current_function;
 
 public:
     current_source();
-    
-
     
     ///construct with the current that will not change during the simulation
     current_source(double const_current);
     
     void set_current_function(std::function<double(double)> current_function_p);
     
-    
-      double get_current(double time);
+    double get_current(double time);
     
     ComponentType get_type();
-
 
     ///to string method
     std::string toString();
@@ -218,9 +210,6 @@ public:
     ///to string method
     std::string toString();
 };
-
-
-
 
 
 /// node that connects component toghter
@@ -264,7 +253,6 @@ public:
 };
 
 
-
 ///Analog Circuit
 class AnalogCircuit
 {
@@ -285,8 +273,6 @@ public:
     ///a flag to decide if to print the matrix during matrix
     bool print_matrix_during_simulation;
     
-    
-    
     ///for internal algorithm used
     ///only independent voltage source
     std::vector<voltage_source *> voltage_sources;
@@ -294,8 +280,6 @@ public:
     ///for internal algorithm used
     ///only independent current source
     std::vector<current_source *> current_sources;
-    
-
     
 private:
      ///for internal algorithm used
@@ -313,16 +297,11 @@ private:
     int row_num_z;
     int col_num_z;
     
-    
     ///number of nodes
     int NN;
     
     ///node of indepent voltage sources
     int MM;
-    
-    
-
-    
     
 public:
     
@@ -349,8 +328,6 @@ public:
     
 private:
     
-    
-    
     ///get matrix_A for MNA
     ///return values by pointer
     /// referto http://qucs.sourceforge.net/tech/node14.html
@@ -362,7 +339,6 @@ private:
     
     
     matrix_t MNA_get_Q_matrix(matrix_t MATRIX_A, matrix_t MATRIX_Z);
-    
     
     void apply_matrix_B_and_C_to_Matrix_A(matrix_t MATRIX_A);
     
@@ -384,9 +360,6 @@ private:
     ///if return find, return index
     ///if not find, return a negative number
     int get_current_num(current_source *cc);
-    
-    
-    
 };
 
 

@@ -64,7 +64,6 @@ void   Vertex::add_self(Vertex v2)
 	this->z +=  v2.z;
 }
 
-
 Vertex Vertex::sub(Vertex v2)
 {
 	Vertex result = Vertex(0,0,0);;
@@ -74,15 +73,12 @@ Vertex Vertex::sub(Vertex v2)
 	return result;
 }
 
-
 void  Vertex::sub_self(Vertex v2)
 {
 	this->x -=  v2.x;
 	this->y -=  v2.y;
 	this->z -=  v2.z;
 }
-
-
 
 Vertex Vertex::crosss_product(Vertex v2)
 {
@@ -113,8 +109,6 @@ void  Vertex::transfer_self( double x_p, double y_p, double z_p)
 	this->y += y_p;
 	this->z += z_p;
 }
-
-
 
 //vtx is origined from the (0,0,0)
 Vertex Vertex::rotate_around_axis(Vertex vtx, float theta)
@@ -246,8 +240,6 @@ double Vertex::distance_to_v(Vertex v)
 	return sqrt(temp);
 }
 
-
-
 double Vertex::distance_square_to_v(Vertex v)
 {
 #if 0
@@ -258,9 +250,6 @@ double Vertex::distance_square_to_v(Vertex v)
 #endif
 
 }
-
-
-
 
 bool Vertex::isZero()
 {
@@ -343,8 +332,6 @@ Vertex  Vertex::get_copy()
 {
 	return Vertex(x,y,z);
 }
-
-
 
 std::string Vertex::toString()
 {
@@ -480,7 +467,6 @@ SpringBond::SpringBond()
 {
 }
 
-
 SpringBond::SpringBond(PointMass *pm1_p, PointMass *pm2_p, double original_length_p, double spring_constant_p)
 {
 	this->pm1 = pm1_p;
@@ -497,18 +483,14 @@ Vertex SpringBond::get_force_on_pm1()
 
 	//delta X
 	double difference = distance - this->original_length;
-	//double difference =   this->original_length - distance;
-
 
 	//normaliza direction
-
 	directionV.normalize_self();
 
 	//F = K* delta X
 	double scal = difference *  spring_constant;
 	directionV.scale_self(scal, scal, scal);
 
-	//CLOG("scal "<< scal << " difference"<<difference<<"spr const"<<spring_constant <<" force"<<directionV.toString());
 	return directionV;
 }
 
@@ -536,16 +518,12 @@ bool SpringBond::isEqual( SpringBond * other)
 	bool f3 = (other->pm1 == this->pm1)&&(other->pm2 == this->pm2);
 	bool f4 = (other->pm1 == this->pm2)&&(other->pm2 == this->pm1);
 
-	if ((f3&&f1&&f2)||(f4&&f1&&f2))
-	{
+	if ((f3&&f1&&f2)||(f4&&f1&&f2)){
 		return true;
-	}else
-	{
+	}else{
 		return false;
 	}
 }
-
-
 
 TheWorld::TheWorld()
 {
@@ -573,10 +551,6 @@ void TheWorld::add_spring_bond(SpringBond *spring_bond)
 	spring_bond_arr.push_back(spring_bond);
 }
 
-
-
-
-
 void TheWorld::set_intergration_type(IntergrationTypes intergration_type_p)
 {
 	intergration_type = intergration_type_p;
@@ -596,7 +570,6 @@ void TheWorld::set_gravitation_flag(bool on)
 {
 	this->gravitation_flag = on;
 }
-
 
 void TheWorld::set_periodic_box_boundry_flag(bool on)
 {
@@ -700,8 +673,7 @@ void TheWorld::apply_electric_among_objects()
 void TheWorld::apply_spring_force()
 {
 	//apply spring bond to the acceleration
-	//int size = ;
-//#pragma omp parallel for num_threads(4)
+	#pragma omp parallel for num_threads(4)
 	for (int ii = 0; ii < spring_bond_arr.size(); ++ii)
 	{
 		SpringBond * spd = spring_bond_arr[ii];
@@ -718,11 +690,8 @@ void TheWorld::apply_spring_force()
 		double temp2 = -1/temp_pm2->mass; 
 		Vertex a2 = f1.scale(temp2,temp2,temp2);
 
-//#pragma omp critical(apply_spring_force_lock)
-		{
-			temp_pm1->acl.add_self(a1);
-			temp_pm2->acl.add_self(a2);
-		}
+		temp_pm1->acl.add_self(a1);
+		temp_pm2->acl.add_self(a2);
 	}
 }
 
@@ -745,12 +714,9 @@ void TheWorld::apply_force()
 		apply_gravitation_among_objects();
 	}
 
-	if (electric_force_flag)
-	{
+	if (electric_force_flag){
 		apply_electric_among_objects();
 	}
-
-
 
 	apply_spring_force();
 }
@@ -834,9 +800,7 @@ void TheWorld::update_state_by_rectangular(double time_step)
 
 
 void TheWorld::init(){
-
 	this->apply_force();
-
 }
 
 //assert at least two point mass
@@ -904,9 +868,6 @@ void TheWorld::update_state(double time_step)
 	this->timer.update_state(time_step);
 }
 
-
-
-
 std::string TheWorld::toString()
 {
 	std::string str;
@@ -925,11 +886,9 @@ std::string TheWorld::toString()
 			str.append("]");
 		}
 	}
-
 	str.append(" }");
 	return str;
 }
-
 
 TheWorldTimer::TheWorldTimer()
 {
@@ -957,7 +916,6 @@ int TheWorldTimer::get_elapsed_picosecond()
 	CLOG(elapsed_second);
 	return (int)(elapsed_second/(1 PS));
 }
-
 
 int TheWorldTimer::get_elapsed_second()
 {

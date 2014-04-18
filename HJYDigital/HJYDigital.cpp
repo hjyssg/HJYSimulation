@@ -1,6 +1,6 @@
 /*
  * File:   HJYDigital.cpp
- * Author: workingAccount
+ * Author: hjyssg
  *
  * Created on March 4, 2014, 11:12 AM
  */
@@ -436,18 +436,7 @@ void DigitalCircuit::log_wire()
             printf("    wire%i %i ",w->id, w->value);
         }else{
             printf("    wire%i X ",w->id);
-        }
-//        
-//        if(w->receiver!=NULL)
-//        {
-//            printf(" receiver %i ",w->receiver->id);
-//        }
-//        
-//        if(w->driver!=NULL)
-//        {
-//            printf(" driver %i ",w->driver->id);
-//        }
-        
+        }        
         printf("\n");
     }
 }
@@ -460,28 +449,19 @@ void DigitalCircuit::log_module()
     {
         Module *m = moduleList[ii];
 
-        if (m->functionType == AND)
-        {
+        if (m->functionType == AND){
             printf("    %i AND ",m->id);
         }
-        else if (m->functionType == OR)
-        {
-            
+        else if (m->functionType == OR){
             printf("    %i OR ",m->id);
-        }else if (m->functionType == NOT)
-        {
-            printf("    %i NOT ",m->id);
-            
-        }else if(m->functionType == NAND)
-        {
+        }else if (m->functionType == NOT){
+            printf("    %i NOT ",m->id);    
+        }else if(m->functionType == NAND){
             printf("   %i NAND ",m->id);
         }
-        else if(m->functionType == NOR)
-        {
-            printf("   %i NOR ",m->id);
-            
-        }else
-        {
+        else if(m->functionType == NOR){
+            printf("   %i NOR ",m->id);  
+        }else{
             printf("   %i UNKNOWN",m->id);
         }
         

@@ -45,16 +45,6 @@ double sin_wave(double x){
     return 5*sin(5*PI*x);
 }
 
-double step_wave(double x)
-{
-    if (x<0.01||x>0.02) {
-        return 5;
-    }else
-    {
-        return -5;
-    }
-}
-
 
 void init_circuit()
 {
