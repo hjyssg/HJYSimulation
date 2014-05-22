@@ -13,14 +13,14 @@ If your compiler supports OpenMp, please enable it. This engine supports openMp 
 
 ####It has following class:  
 
-* **Vertex**:  It represents a mathematical point in the 3D space. It has x, y, z coordinates and related methods: add,substract, dot-product, cross-product and etc. It is used to represent position, velocity and acceleration bt the following classes.
+* **Vertex**:  It represents a mathematical point in the 3D space. It has x, y, z coordinates and related methods: add,subtract, dot-product, cross-product and etc. It is used to represent position, velocity and acceleration by the following classes.
 *  **PointMass**: the most basic component in Newton Physics. It has position, velocity, acceleration, mass. Point mass does not have volume or radius. It is a point with mass. 
 * **SpringBond**: The representation of a spring connecting two point mass objects and follows the Hooke's Law. 
 *  **TheWorldTimer**: A small timer used by “theWorld” to track the time.
-*  **TheWorld**: The representation of Newton physics world. Point mass and other objects will be added to it and interact each the time steps. By specifying flags, it can integrate by using different integration methods and enable/disable different force computation. Please don't turn on all force computaion flag. Only keep on nessary flags, otherwise the computaion will be slow.
+*  **TheWorld**: The representation of Newton physics world. Point mass and other objects will be added to it and interact each the time steps. By specifying flags, it can integrate by using different integration methods and enable/disable different force computation. Please don't turn on all force computation flag. Only keep on nessessary flags, otherwise the computation will be slow.
 
 ####pseudo-code: how a simulation program looks like:
-	initilize a theWorld instance and specify computation flags
+	initialize a theWorld instance and specify computation flags
 	create pointMass and other object
 	add them to theWorld engine
 	theWorld init
@@ -39,7 +39,7 @@ If your compiler supports OpenMp, please enable it. This engine supports openMp 
 The examples use VPython to visualize the simulation result.  
 In each example, there is a VPython_flag. By setting it to 1, the visualization will be turned on. If set to 0, the program will run without visualization.  
 To set up on windows machine,First, download and install the 32-bit Python-3.2.2 from python.org. Second, download and install VPython-Win-Py3.2-5.74. In Visual studio, add VPython directory to the c++ linker directory. 
-For more detial, you can also refer to this [page](http://kona.ee.pitt.edu/1180wiki/doku.php?id=how_to_mix_c_and_python). 
+For more detail, you can also refer to this [page](http://kona.ee.pitt.edu/1180wiki/doku.php?id=how_to_mix_c_and_python). 
 
 
 
